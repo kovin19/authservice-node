@@ -32,9 +32,16 @@ model Permission {
 model User {
   id Int @id @default(autoincrement())
 
+  firstName String
+  lastName String
+  secondLastName String?
+
   email String @unique
   password String
-  isActive Boolean @default(true)
+
+  profileImage String?
+
+  isActive Boolean @default(false)
 
   groups Group[] @relation("UserGroups")
 

@@ -1,29 +1,36 @@
-const {PrismaClient} = require("@prisma/client");
-const bcrypt = require("bcrypt");
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-    const email = "correo@mail.com";
-    const password = "12345";
+  const firstName = "User";
+  const lastName = "Admin";
+  const email = "correo@mail.com";
+  const password = "12345";
 
-    const exists = await prisma.user.findUnique({where: {email}});
+  const exists = await prisma.user.findUnique({ where: { email } });
 
-    if(!exists) {
-        const hashedPassword = await bcrypt.hash(password, 10);
+  if (!exists) {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword,
-            },
-        });
+    await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        isActive: true,
+        password: hashedPassword,
+      },
+    });
 
-        console.log("Usuario administrador precargado")
-    } else console.log("Usuario administrador ya existe")
+    console.log("Usuario administrador precargado");
+  } else {
+    console.log("Usuario administrador ya existe");
+  }
 }
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   seed()
     .catch((e) => {
       console.error(e);
@@ -33,5 +40,3 @@ if (require.main === module) {
       await prisma.$disconnect();
     });
 }
-
-module.exports = seed;
